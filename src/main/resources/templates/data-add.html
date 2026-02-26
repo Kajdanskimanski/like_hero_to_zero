@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO2-Daten hinzufügen - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/data-add.css}">
+
+    <script th:src="@{/js/theme-toggle.js}"></script>
+
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-link">
+        <a href="/dashboard">← Zurück zum Dashboard</a>
+        <a href="/">🌍 Öffentliche Ansicht</a>
+    </div>
+    <div class="nav-link">
+            <span style="color: white; font-weight: bold;">
+                Angemeldet als: <span th:text="${username}"></span>
+            </span>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="container">
+    <div class="form-card">
+        <h1>📝 CO2-Daten hinzufügen</h1>
+        <p class="subtitle">Neue Emissionsdaten in die Datenbank eintragen</p>
+
+        <div th:if="${success}" class="success" th:text="${success}"></div>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <form  th:action="@{/data/add}"  method="post">
+            <div class="form-group">
+                <label for="country">Land *</label>
+                <input type="text"
+                       id="country"
+                       name="country"
+                       placeholder="z.B. Germany, France, United States"
+                       required />
+                <div class="form-helper">
+                    Geben Sie den englischen Ländernamen ein
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Jahr *</label>
+                <input type="number"
+                       id="year"
+                       name="year"
+                       min="1900"
+                       max="2100"
+                       placeholder="z.B. 2023"
+                       required />
+                <div class="form-helper">
+                    Das Jahr der Messung
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="co2Emissions">CO2-Emissionen (kt) *</label>
+                <input type="number"
+                       id="co2Emissions"
+                       name="co2Emissions"
+                       step="0.01"
+                       placeholder="z.B. 675000.50"
+                       required />
+                <div class="form-helper">
+                    CO2-Emissionen in Kilotonnen (kt)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="source">Quelle (optional)</label>
+                <input type="text"
+                       id="source"
+                       name="source"
+                       placeholder="z.B. World Bank, EPA, Eurostat" />
+                <div class="form-helper">
+                    Datenquelle angeben (falls bekannt)
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">✅ Daten speichern</button>
+                <button type="button" onclick="window.location.href='/dashboard'">
+                    Abbrechen
+                </button>
+            </div>
+        </form>
+
+        <div class="info-box">
+            <p>
+                ℹ️ <strong>Hinweis:</strong> Alle mit * markierten Felder sind Pflichtfelder.
+                Die Daten werden sofort in der Datenbank gespeichert und sind öffentlich einsehbar.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

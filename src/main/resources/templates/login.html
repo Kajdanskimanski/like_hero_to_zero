@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Login - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/login.css}">
+
+    <script th:src="@{/js/theme-toggle.js}"></script>
+
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-link">
+        <a href="/">← Zurück zur Startseite</a>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="login-container">
+    <header>
+        <h1>🌍 Like Hero To Zero</h1>
+        <p>Login für Wissenschaftler:innen</p>
+    </header>
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <div class="success" th:if="${message}" th:text="${message}"></div>
+    <div class="success" th:if="${success}" th:text="${success}"></div>
+
+    <form method="post" th:action="@{/login}">
+        <div class="form-group">
+            <label for="username">Benutzername:</label>
+            <input autofocus id="username" name="username" required type="text"/>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Passwort:</label>
+            <input id="password" name="password" required type="password"/>
+        </div>
+
+        <button type="submit">Anmelden</button>
+    </form>
+
+    <div class="register-link">
+        <p>Noch kein Account?</p>
+        <a href="/register">Jetzt als Wissenschaftler:in registrieren</a>
+    </div>
+
+    <div class="info">
+        <p>💡 <strong>Tipp:</strong> Als Bürger:in können Sie CO2-Daten auch ohne Login einsehen!</p>
+        <a href="/">Zur öffentlichen Datenansicht</a>
+    </div>
+</div>
+</body>
+</html>

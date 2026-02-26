@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daten bearbeiten - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/data-edit.css}">
+    <script th:src="@{/js/theme-toggle.js}"></script>
+
+
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-link">
+        <a href="/data/list">← Zurück zur Übersicht</a>
+        <a href="/dashboard">📊 Dashboard</a>
+    </div>
+    <div class="nav-link">
+            <span style="color: white; font-weight: bold;">
+                Angemeldet als: <span th:text="${username}"></span>
+            </span>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="container">
+    <div class="form-card">
+        <h1>✏️ Datensatz bearbeiten</h1>
+        <p class="subtitle">CO2-Emissionsdaten korrigieren</p>
+
+        <form th:action="@{/data/edit/{id}(id=${emission.id})}" method="post">
+            <div class="form-group">
+                <label for="country">Land *</label>
+                <input type="text"
+                       id="country"
+                       name="country"
+                       th:value="${emission.country}"
+                       required />
+            </div>
+
+            <div class="form-group">
+                <label for="year">Jahr *</label>
+                <input type="number"
+                       id="year"
+                       name="year"
+                       th:value="${emission.year}"
+                       min="1900"
+                       max="2100"
+                       required />
+            </div>
+
+            <div class="form-group">
+                <label for="co2Emissions">CO2-Emissionen (kt) *</label>
+                <input type="number"
+                       id="co2Emissions"
+                       name="co2Emissions"
+                       th:value="${emission.co2Emissions}"
+                       step="0.01"
+                       required />
+                <div class="form-helper">
+                    CO2-Emissionen in Kilotonnen (kt)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="source">Quelle (optional)</label>
+                <input type="text"
+                       id="source"
+                       name="source"
+                       th:value="${emission.source}" />
+            </div>
+
+            <div class="button-group">
+                <button type="submit">💾 Änderungen speichern</button>
+                <button type="button" onclick="window.location.href='/data/list'">
+                    Abbrechen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

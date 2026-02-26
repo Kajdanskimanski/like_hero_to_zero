@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Admin Dashboard - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/dashboard.css}">
+    <script th:src="@{/js/theme-toggle.js}"></script>
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-link">
+        <a href="/">← Zur öffentlichen Ansicht</a>
+    </div>
+    <div class="nav-link" style="display: flex; align-items: center; gap: 15px;">
+        <span style="color: white; font-weight: bold;">
+            Angemeldet als: <span th:text="${username}"></span> 👑
+        </span>
+        <form class="logout-form" method="post" style="margin: 0;" th:action="@{/logout}">
+            <button type="submit">Abmelden</button>
+        </form>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="container">
+    <div class="dashboard-header">
+        <h1>⚙️ Admin Dashboard - Like Hero To Zero</h1>
+        <div class="welcome">
+            <p><strong>Willkommen, <span th:text="${username}"></span>!</strong></p>
+            <p>Sie sind als Administrator angemeldet und können Daten freigeben und verwalten.</p>
+        </div>
+    </div>
+
+    <div class="functions-card">
+        <h2>🛠️ Admin Funktionen</h2>
+        <div class="function-grid">
+            <a href="/admin/pending" style="text-decoration: none;">
+                <div class="function-item">
+                    <h3>⏳ Freigaben verwalten</h3>
+                    <p>Neue Datensätze von Wissenschaftler:innen prüfen und freigeben oder ablehnen.</p>
+                </div>
+            </a>
+            <a href="/data/my-data" style="text-decoration: none;">
+                <div class="function-item">
+                    <h3>📈 Alle Daten einsehen</h3>
+                    <p>Alle CO2-Emissionsdaten in der Datenbank einsehen.</p>
+                </div>
+            </a>
+            <a href="/data/add" style="text-decoration: none;">
+                <div class="function-item">
+                    <h3>📝 Daten hinzufügen</h3>
+                    <p>Neue CO2-Emissionsdaten direkt als Admin erfassen.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

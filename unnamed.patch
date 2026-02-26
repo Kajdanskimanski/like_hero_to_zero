@@ -1,0 +1,692 @@
+Index: src/main/java/org/example/like_hero_to_zero/domain/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/domain/User.java b/src/main/java/org/example/like_hero_to_zero/domain/User.java
+new file mode 100644
+--- /dev/null	(date 1765318586022)
++++ b/src/main/java/org/example/like_hero_to_zero/domain/User.java	(date 1765318586022)
+@@ -0,0 +1,46 @@
++package org.example.like_hero_to_zero.domain;
++
++import jakarta.persistence.*;
++
++
++
++public class User {
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    @Column(unique = true, nullable = false)
++    private String username;
++
++    @Column(nullable = false)
++    private String password;
++
++    private String role = "ROLE_SCIENTIST"; // Standardrolle
++
++    public User() {
++    }
++
++    public User(String username, String password, String role) {
++        this.username = username;
++        this.password = password;
++        this.role = role;
++    }
++
++    // --- Getter & Setter ---
++
++    public Long getId() { return id; }
++
++    public void setId(Long id) { this.id = id; }
++
++    public String getUsername() { return username; }
++
++    public void setUsername(String username) { this.username = username; }
++
++    public String getPassword() { return password; }
++
++    public void setPassword(String password) { this.password = password; }
++
++    public String getRole() { return role; }
++
++    public void setRole(String role) { this.role = role; }
++}
+Index: src/main/java/org/example/like_hero_to_zero/domain/CO2Emission.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/domain/CO2Emission.java b/src/main/java/org/example/like_hero_to_zero/domain/CO2Emission.java
+new file mode 100644
+--- /dev/null	(date 1765318586020)
++++ b/src/main/java/org/example/like_hero_to_zero/domain/CO2Emission.java	(date 1765318586020)
+@@ -0,0 +1,47 @@
++package org.example.like_hero_to_zero.domain;
++
++import jakarta.persistence.*;
++
++@Entity
++public class CO2Emission {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    @Column(nullable = false)
++    private String country;
++
++    @Column(nullable = false)
++    private int year;
++
++    @Column(nullable = false)
++    private double amount;   // CO₂-Ausstoß in Tonnen
++
++    public CO2Emission() {
++    }
++
++    public CO2Emission(String country, int year, double amount) {
++        this.country = country;
++        this.year = year;
++        this.amount = amount;
++    }
++
++    // --- Getter & Setter ---
++
++    public Long getId() { return id; }
++
++    public void setId(Long id) { this.id = id; }
++
++    public String getCountry() { return country; }
++
++    public void setCountry(String country) { this.country = country; }
++
++    public int getYear() { return year; }
++
++    public void setYear(int year) { this.year = year; }
++
++    public double getAmount() { return amount; }
++
++    public void setAmount(double amount) { this.amount = amount; }
++}
+Index: src/main/java/org/example/like_hero_to_zero/service/CO2Service.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/service/CO2Service.java b/src/main/java/org/example/like_hero_to_zero/service/CO2Service.java
+new file mode 100644
+--- /dev/null	(date 1765318586004)
++++ b/src/main/java/org/example/like_hero_to_zero/service/CO2Service.java	(date 1765318586004)
+@@ -0,0 +1,33 @@
++package org.example.like_hero_to_zero.service;
++
++import org.example.like_hero_to_zero.domain.CO2Emission;
++import org.example.like_hero_to_zero.repository.CO2EmissionRepository;
++import org.springframework.stereotype.Service;
++
++import java.util.List;
++import java.util.Optional;
++
++@Service
++public class CO2Service {
++
++    private final CO2EmissionRepository repository;
++
++    public CO2Service(CO2EmissionRepository repository) {
++        this.repository = repository;
++    }
++
++    // ✔ MUST-Anforderung: aktuellster Wert eines Landes
++    public Optional<CO2Emission> getLatestEmissionForCountry(String country) {
++        return repository.findTopByCountryOrderByYearDesc(country);
++    }
++
++    // Daten speichern (für Wissenschaftler:innen im Backend)
++    public CO2Emission save(CO2Emission emission) {
++        return repository.save(emission);
++    }
++
++    // Alle Datensätze anzeigen (optional)
++    public List<CO2Emission> findAll() {
++        return repository.findAll();
++    }
++}
+Index: src/main/java/org/example/like_hero_to_zero/service/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/service/UserService.java b/src/main/java/org/example/like_hero_to_zero/service/UserService.java
+new file mode 100644
+--- /dev/null	(date 1765318586008)
++++ b/src/main/java/org/example/like_hero_to_zero/service/UserService.java	(date 1765318586008)
+@@ -0,0 +1,34 @@
++package org.example.like_hero_to_zero.service;
++
++import org.example.like_hero_to_zero.domain.User;
++import org.example.like_hero_to_zero.repository.UserRepository;
++import org.springframework.security.crypto.password.PasswordEncoder;
++import org.springframework.stereotype.Service;
++
++import java.util.Optional;
++
++@Service
++public class UserService {
++
++    private final UserRepository userRepository;
++    private final PasswordEncoder passwordEncoder;
++
++    public UserService(UserRepository userRepository,
++                       PasswordEncoder passwordEncoder) {
++        this.userRepository = userRepository;
++        this.passwordEncoder = passwordEncoder;
++    }
++
++    // Benutzer finden (für Login)
++    public Optional<User> findByUsername(String username) {
++        return userRepository.findByUsername(username);
++    }
++
++    // Benutzer anlegen (Passwort wird verschlüsselt)
++    public User createUser(String username, String rawPassword, String role) {
++        String encodedPassword = passwordEncoder.encode(rawPassword);
++
++        User user = new User(username, encodedPassword, role);
++        return userRepository.save(user);
++    }
++}
+Index: src/main/java/org/example/like_hero_to_zero/controller/PublicController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/controller/PublicController.java b/src/main/java/org/example/like_hero_to_zero/controller/PublicController.java
+new file mode 100644
+--- /dev/null	(date 1765318585998)
++++ b/src/main/java/org/example/like_hero_to_zero/controller/PublicController.java	(date 1765318585998)
+@@ -0,0 +1,41 @@
++package org.example.like_hero_to_zero.controller;
++
++import org.example.like_hero_to_zero.domain.CO2Emission;
++import org.example.like_hero_to_zero.service.CO2Service;
++import org.springframework.stereotype.Controller;
++import org.springframework.ui.Model;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.RequestParam;
++
++import java.util.Optional;
++
++@Controller
++public class PublicController {
++
++    private final CO2Service co2Service;
++
++    public PublicController(CO2Service co2Service) {
++        this.co2Service = co2Service;
++    }
++
++    // GET /   → zeigt Suchseite
++    @GetMapping("/")
++    public String index() {
++        return "public"; // lädt public.html
++    }
++
++    // GET /search?country=Germany
++    @GetMapping("/search")
++    public String search(@RequestParam String country, Model model) {
++        Optional<CO2Emission> emission = co2Service.getLatestEmissionForCountry(country);
++
++        if (emission.isPresent()) {
++            model.addAttribute("emission", emission.get());
++        } else {
++            model.addAttribute("error", "Keine Daten für dieses Land gefunden.");
++        }
++
++        model.addAttribute("country", country);
++        return "public";
++    }
++}
+Index: src/main/java/org/example/like_hero_to_zero/repository/UserRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/repository/UserRepository.java b/src/main/java/org/example/like_hero_to_zero/repository/UserRepository.java
+new file mode 100644
+--- /dev/null	(date 1765318585990)
++++ b/src/main/java/org/example/like_hero_to_zero/repository/UserRepository.java	(date 1765318585990)
+@@ -0,0 +1,13 @@
++package org.example.like_hero_to_zero.repository;
++
++import org.example.like_hero_to_zero.domain.User;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++import java.util.Optional;
++
++public interface UserRepository extends JpaRepository<User, Long> {
++
++    // Wird von Spring Security verwendet
++    Optional<User> findByUsername(String username);
++}
++
+Index: src/main/java/org/example/like_hero_to_zero/repository/CO2EmissionRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/repository/CO2EmissionRepository.java b/src/main/java/org/example/like_hero_to_zero/repository/CO2EmissionRepository.java
+new file mode 100644
+--- /dev/null	(date 1765318585988)
++++ b/src/main/java/org/example/like_hero_to_zero/repository/CO2EmissionRepository.java	(date 1765318585988)
+@@ -0,0 +1,14 @@
++package org.example.like_hero_to_zero.repository;
++
++import org.example.like_hero_to_zero.domain.CO2Emission;
++import org.springframework.data.jpa.repository.JpaRepository;
++
++import java.util.Optional;
++
++public interface CO2EmissionRepository extends JpaRepository<CO2Emission, Long> {
++
++    // Wichtig für die MUST-Anforderung:
++    // → Hole den neuesten Datensatz (höchstes Jahr) für ein bestimmtes Land.
++    Optional<CO2Emission> findTopByCountryOrderByYearDesc(String country);
++}
++
+Index: src/main/java/org/example/like_hero_to_zero/LikeHeroToZeroApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/like_hero_to_zero/LikeHeroToZeroApplication.java b/src/main/java/org/example/like_hero_to_zero/LikeHeroToZeroApplication.java
+new file mode 100644
+--- /dev/null	(date 1765318585978)
++++ b/src/main/java/org/example/like_hero_to_zero/LikeHeroToZeroApplication.java	(date 1765318585978)
+@@ -0,0 +1,13 @@
++package org.example.like_hero_to_zero;
++
++import org.springframework.boot.SpringApplication;
++import org.springframework.boot.autoconfigure.SpringBootApplication;
++
++@SpringBootApplication
++public class LikeHeroToZeroApplication {
++
++    public static void main(String[] args) {
++        SpringApplication.run(LikeHeroToZeroApplication.class, args);
++    }
++
++}
+Index: src/main/java/org/like_hero_to_zero/domain/User.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/domain/User.java b/src/main/java/org/like_hero_to_zero/domain/User.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/domain/User.java
++++ /dev/null
+@@ -1,46 +0,0 @@
+-package org.like_hero_to_zero.domain;
+-
+-import jakarta.persistence.*;
+-
+-
+-
+-public class User {
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Long id;
+-
+-    @Column(unique = true, nullable = false)
+-    private String username;
+-
+-    @Column(nullable = false)
+-    private String password;
+-
+-    private String role = "ROLE_SCIENTIST"; // Standardrolle
+-
+-    public User() {
+-    }
+-
+-    public User(String username, String password, String role) {
+-        this.username = username;
+-        this.password = password;
+-        this.role = role;
+-    }
+-
+-    // --- Getter & Setter ---
+-
+-    public Long getId() { return id; }
+-
+-    public void setId(Long id) { this.id = id; }
+-
+-    public String getUsername() { return username; }
+-
+-    public void setUsername(String username) { this.username = username; }
+-
+-    public String getPassword() { return password; }
+-
+-    public void setPassword(String password) { this.password = password; }
+-
+-    public String getRole() { return role; }
+-
+-    public void setRole(String role) { this.role = role; }
+-}
+Index: src/main/java/org/like_hero_to_zero/domain/CO2Emission.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/domain/CO2Emission.java b/src/main/java/org/like_hero_to_zero/domain/CO2Emission.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/domain/CO2Emission.java
++++ /dev/null
+@@ -1,47 +0,0 @@
+-package org.like_hero_to_zero.domain;
+-
+-import jakarta.persistence.*;
+-
+-@Entity
+-public class CO2Emission {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Long id;
+-
+-    @Column(nullable = false)
+-    private String country;
+-
+-    @Column(nullable = false)
+-    private int year;
+-
+-    @Column(nullable = false)
+-    private double amount;   // CO₂-Ausstoß in Tonnen
+-
+-    public CO2Emission() {
+-    }
+-
+-    public CO2Emission(String country, int year, double amount) {
+-        this.country = country;
+-        this.year = year;
+-        this.amount = amount;
+-    }
+-
+-    // --- Getter & Setter ---
+-
+-    public Long getId() { return id; }
+-
+-    public void setId(Long id) { this.id = id; }
+-
+-    public String getCountry() { return country; }
+-
+-    public void setCountry(String country) { this.country = country; }
+-
+-    public int getYear() { return year; }
+-
+-    public void setYear(int year) { this.year = year; }
+-
+-    public double getAmount() { return amount; }
+-
+-    public void setAmount(double amount) { this.amount = amount; }
+-}
+Index: src/main/java/org/like_hero_to_zero/service/CO2Service.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/service/CO2Service.java b/src/main/java/org/like_hero_to_zero/service/CO2Service.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/service/CO2Service.java
++++ /dev/null
+@@ -1,33 +0,0 @@
+-package org.like_hero_to_zero.service;
+-
+-import org.like_hero_to_zero.domain.CO2Emission;
+-import org.like_hero_to_zero.repository.CO2EmissionRepository;
+-import org.springframework.stereotype.Service;
+-
+-import java.util.List;
+-import java.util.Optional;
+-
+-@Service
+-public class CO2Service {
+-
+-    private final CO2EmissionRepository repository;
+-
+-    public CO2Service(CO2EmissionRepository repository) {
+-        this.repository = repository;
+-    }
+-
+-    // ✔ MUST-Anforderung: aktuellster Wert eines Landes
+-    public Optional<CO2Emission> getLatestEmissionForCountry(String country) {
+-        return repository.findTopByCountryOrderByYearDesc(country);
+-    }
+-
+-    // Daten speichern (für Wissenschaftler:innen im Backend)
+-    public CO2Emission save(CO2Emission emission) {
+-        return repository.save(emission);
+-    }
+-
+-    // Alle Datensätze anzeigen (optional)
+-    public List<CO2Emission> findAll() {
+-        return repository.findAll();
+-    }
+-}
+Index: src/main/java/org/like_hero_to_zero/service/UserService.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/service/UserService.java b/src/main/java/org/like_hero_to_zero/service/UserService.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/service/UserService.java
++++ /dev/null
+@@ -1,34 +0,0 @@
+-package org.like_hero_to_zero.service;
+-
+-import org.like_hero_to_zero.domain.User;
+-import org.like_hero_to_zero.repository.UserRepository;
+-import org.springframework.security.crypto.password.PasswordEncoder;
+-import org.springframework.stereotype.Service;
+-
+-import java.util.Optional;
+-
+-@Service
+-public class UserService {
+-
+-    private final UserRepository userRepository;
+-    private final PasswordEncoder passwordEncoder;
+-
+-    public UserService(UserRepository userRepository,
+-                       PasswordEncoder passwordEncoder) {
+-        this.userRepository = userRepository;
+-        this.passwordEncoder = passwordEncoder;
+-    }
+-
+-    // Benutzer finden (für Login)
+-    public Optional<User> findByUsername(String username) {
+-        return userRepository.findByUsername(username);
+-    }
+-
+-    // Benutzer anlegen (Passwort wird verschlüsselt)
+-    public User createUser(String username, String rawPassword, String role) {
+-        String encodedPassword = passwordEncoder.encode(rawPassword);
+-
+-        User user = new User(username, encodedPassword, role);
+-        return userRepository.save(user);
+-    }
+-}
+Index: src/main/java/org/like_hero_to_zero/controller/PublicController.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/controller/PublicController.java b/src/main/java/org/like_hero_to_zero/controller/PublicController.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/controller/PublicController.java
++++ /dev/null
+@@ -1,41 +0,0 @@
+-package org.like_hero_to_zero.controller;
+-
+-import org.like_hero_to_zero.domain.CO2Emission;
+-import org.like_hero_to_zero.service.CO2Service;
+-import org.springframework.stereotype.Controller;
+-import org.springframework.ui.Model;
+-import org.springframework.web.bind.annotation.GetMapping;
+-import org.springframework.web.bind.annotation.RequestParam;
+-
+-import java.util.Optional;
+-
+-@Controller
+-public class PublicController {
+-
+-    private final CO2Service co2Service;
+-
+-    public PublicController(CO2Service co2Service) {
+-        this.co2Service = co2Service;
+-    }
+-
+-    // GET /   → zeigt Suchseite
+-    @GetMapping("/")
+-    public String index() {
+-        return "public"; // lädt public.html
+-    }
+-
+-    // GET /search?country=Germany
+-    @GetMapping("/search")
+-    public String search(@RequestParam String country, Model model) {
+-        Optional<CO2Emission> emission = co2Service.getLatestEmissionForCountry(country);
+-
+-        if (emission.isPresent()) {
+-            model.addAttribute("emission", emission.get());
+-        } else {
+-            model.addAttribute("error", "Keine Daten für dieses Land gefunden.");
+-        }
+-
+-        model.addAttribute("country", country);
+-        return "public";
+-    }
+-}
+Index: src/main/java/org/like_hero_to_zero/repository/UserRepository.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/repository/UserRepository.java b/src/main/java/org/like_hero_to_zero/repository/UserRepository.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/repository/UserRepository.java
++++ /dev/null
+@@ -1,13 +0,0 @@
+-package org.like_hero_to_zero.repository;
+-
+-import org.like_hero_to_zero.domain.User;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-
+-import java.util.Optional;
+-
+-public interface UserRepository extends JpaRepository<User, Long> {
+-
+-    // Wird von Spring Security verwendet
+-    Optional<User> findByUsername(String username);
+-}
+-
+Index: src/main/java/org/like_hero_to_zero/repository/CO2EmissionRepository.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/repository/CO2EmissionRepository.java b/src/main/java/org/like_hero_to_zero/repository/CO2EmissionRepository.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/repository/CO2EmissionRepository.java
++++ /dev/null
+@@ -1,14 +0,0 @@
+-package org.like_hero_to_zero.repository;
+-
+-import org.like_hero_to_zero.domain.CO2Emission;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-
+-import java.util.Optional;
+-
+-public interface CO2EmissionRepository extends JpaRepository<CO2Emission, Long> {
+-
+-    // Wichtig für die MUST-Anforderung:
+-    // → Hole den neuesten Datensatz (höchstes Jahr) für ein bestimmtes Land.
+-    Optional<CO2Emission> findTopByCountryOrderByYearDesc(String country);
+-}
+-
+Index: src/main/java/org/like_hero_to_zero/LikeHeroToZeroApplication.java
+===================================================================
+diff --git a/src/main/java/org/like_hero_to_zero/LikeHeroToZeroApplication.java b/src/main/java/org/like_hero_to_zero/LikeHeroToZeroApplication.java
+deleted file mode 100644
+--- a/src/main/java/org/like_hero_to_zero/LikeHeroToZeroApplication.java
++++ /dev/null
+@@ -1,13 +0,0 @@
+-package org.like_hero_to_zero;
+-
+-import org.springframework.boot.SpringApplication;
+-import org.springframework.boot.autoconfigure.SpringBootApplication;
+-
+-@SpringBootApplication
+-public class LikeHeroToZeroApplication {
+-
+-    public static void main(String[] args) {
+-        SpringApplication.run(LikeHeroToZeroApplication.class, args);
+-    }
+-
+-}
+Index: src/test/java/org/example/like_hero_to_zero/LikeHeroToZeroApplicationTests.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/org/example/like_hero_to_zero/LikeHeroToZeroApplicationTests.java b/src/test/java/org/example/like_hero_to_zero/LikeHeroToZeroApplicationTests.java
+new file mode 100644
+--- /dev/null	(date 1765318585971)
++++ b/src/test/java/org/example/like_hero_to_zero/LikeHeroToZeroApplicationTests.java	(date 1765318585971)
+@@ -0,0 +1,13 @@
++package org.example.like_hero_to_zero;
++
++import org.junit.jupiter.api.Test;
++import org.springframework.boot.test.context.SpringBootTest;
++
++@SpringBootTest
++class LikeHeroToZeroApplicationTests {
++
++    @Test
++    void contextLoads() {
++    }
++
++}
+Index: .idea/modules.xml
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+deleted file mode 100644
+--- a/.idea/modules.xml
++++ /dev/null
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="ProjectModuleManager">
+-    <modules>
+-      <module fileurl="file://$PROJECT_DIR$/like_hero_to_zero.iml" filepath="$PROJECT_DIR$/like_hero_to_zero.iml" />
+-    </modules>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml
++++ b/pom.xml	(date 1765318585901)
+@@ -5,8 +5,8 @@
+     <parent>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-parent</artifactId>
+-        <version>3.3.4</version>
+-        <relativePath/>
++        <version>4.0.0</version>
++        <relativePath/> <!-- lookup parent from repository -->
+     </parent>
+     <groupId>org.example</groupId>
+     <artifactId>like_hero_to_zero</artifactId>
+Index: like_hero_to_zero.iml
+===================================================================
+diff --git a/like_hero_to_zero.iml b/like_hero_to_zero.iml
+deleted file mode 100644
+--- a/like_hero_to_zero.iml
++++ /dev/null
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<module version="4">
+-  <component name="AdditionalModuleElements">
+-    <content url="file://$MODULE_DIR$" dumb="true">
+-      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+-    </content>
+-  </component>
+-</module>
+\ No newline at end of file

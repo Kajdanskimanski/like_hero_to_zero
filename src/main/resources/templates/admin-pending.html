@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freigaben verwalten - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/data-edit.css}">
+    <script th:src="@{/js/theme-toggle.js}"></script>
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-link">
+        <a href="/dashboard">← Zurück zum Dashboard</a>
+    </div>
+    <div class="nav-link">
+        <span style="color: white; font-weight: bold;">
+            Angemeldet als: <span th:text="${username}"></span> 👑
+        </span>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="container">
+    <div class="form-card">
+        <h1>⏳ Freigaben verwalten</h1>
+        <p class="subtitle">Neue Datensätze von Wissenschaftler:innen prüfen</p>
+
+        <!-- Erfolgsmeldung -->
+        <div th:if="${success}" style="background:#d4edda; color:#155724; padding:15px; border-radius:8px; margin-bottom:20px;">
+            ✅ <span th:text="${success}"></span>
+        </div>
+
+        <!-- Fehlermeldung -->
+        <div th:if="${error}" style="background:#f8d7da; color:#721c24; padding:15px; border-radius:8px; margin-bottom:20px;">
+            ❌ <span th:text="${error}"></span>
+        </div>
+
+        <!-- Keine Einträge -->
+        <div th:if="${emissions.isEmpty()}" style="text-align:center; padding:40px; color: var(--text-secondary);">
+            <p style="font-size:2em;">✅</p>
+            <p>Keine ausstehenden Freigaben vorhanden.</p>
+        </div>
+
+        <!-- Tabelle -->
+        <div th:unless="${emissions.isEmpty()}">
+            <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                <thead>
+                <tr style="background: var(--gradient-bg); color:white;">
+                    <th style="padding:12px; text-align:left;">Land</th>
+                    <th style="padding:12px; text-align:left;">Jahr</th>
+                    <th style="padding:12px; text-align:left;">CO2</th>
+                    <th style="padding:12px; text-align:left;">Quelle</th>
+                    <th style="padding:12px; text-align:left;">Erstellt von</th>
+                    <th style="padding:12px; text-align:left;">Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e, i : ${emissions}"
+                    th:style="${i.odd} ? 'background: var(--bg-secondary)' : 'background: var(--bg-white)'">
+                    <td style="padding:12px;" th:text="${e.country}"></td>
+                    <td style="padding:12px;" th:text="${e.year}"></td>
+                    <td style="padding:12px;" th:text="${e.co2Emissions}"></td>
+                    <td style="padding:12px;" th:text="${e.source}"></td>
+                    <td style="padding:12px;" th:text="${e.createdBy}"></td>
+                    <td style="padding:12px;">
+                        <form th:action="@{/admin/approve/{id}(id=${e.id})}" method="post" style="display:inline">
+                            <button type="submit" style="background:#28a745; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; margin-right:5px;">
+                                ✅ Freigeben
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/reject/{id}(id=${e.id})}" method="post" style="display:inline">
+                            <button type="submit" style="background:#dc3545; color:white; border:none; padding:8px 15px; border-radius:6px; cursor:pointer;">
+                                ❌ Ablehnen
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="button-group" style="margin-top:30px;">
+            <button type="button" onclick="window.location.href='/dashboard'">
+                ← Zurück zum Dashboard
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

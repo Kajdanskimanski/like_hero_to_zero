@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Like Hero To Zero - CO2 Emissions</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/public.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="navbar">
+    <div class="login-link">
+        <a href="/login">🔐 Wissenschaftler Login</a>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="container">
+    <header>
+        <h1>🌍 Like Hero To Zero</h1>
+        <p>Weltweite CO2-Emissionsdaten einsehen</p>
+    </header>
+
+    <!-- Suche -->
+    <div class="search-card">
+        <h2>🔍 CO2-Emissionen pro Land</h2>
+        <form action="/search" class="search-form" method="get">
+            <label for="source">Datenquelle:</label>
+            <select class="search-select" id="source" name="source" required>
+                <option value="">-- Quelle auswählen --</option>
+                <option th:each="s : ${sources}"
+                        th:selected="${s == source}"
+                        th:text="${s}"
+                        th:value="${s}"></option>
+            </select>
+
+            <label for="country">Land auswählen:</label>
+            <select class="search-select" id="country" name="country" required>
+                <option value="">-- Land auswählen --</option>
+                <option th:each="c : ${countries}"
+                        th:selected="${c == country}"
+                        th:text="${c}"
+                        th:value="${c}"></option>
+            </select>
+
+            <label for="year">Jahr auswählen:</label>
+            <select class="search-select" id="year" name="year" required>
+                <option value="">-- Jahr auswählen --</option>
+                <option th:each="y : ${years}"
+                        th:selected="${y == year}"
+                        th:text="${y}"
+                        th:value="${y}"></option>
+            </select>
+
+            <button type="submit">Suchen</button>
+        </form>
+    </div>
+
+    <!-- Fehler -->
+    <div class="result-card" th:if="${error}">
+        <div class="error" th:text="${error}"></div>
+    </div>
+
+    <!-- Ergebnis -->
+    <div th:if="${totalEmission}">
+
+        <!-- Hauptwert -->
+        <div class="result-card">
+            <h2>📊 CO2-Emissionen für <span th:text="${country}"></span></h2>
+
+            <div class="emission-value">
+                <span th:text="${#numbers.formatDecimal(totalEmission.co2Emissions, 0, 'COMMA', 2, 'POINT')}"></span>
+                <span th:text="${totalEmission.unit != null ? totalEmission.unit : 'MtCO2'}"></span>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Jahr</label>
+                    <span class="value" th:text="${year}"></span>
+                </div>
+                <div class="info-item">
+                    <label>Land</label>
+                    <span class="value" th:text="${country}"></span>
+                </div>
+                <div class="info-item">
+                    <label>Quelle</label>
+                    <span class="value" th:text="${totalEmission.source}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pro Kopf / Weltanteil / Bevölkerung -->
+        <div class="result-card" th:if="${perCapita != null or shareGlobal != null or population != null}">
+            <h2>📈 Weitere Kennzahlen</h2>
+            <div class="info-grid">
+                <div class="info-item" th:if="${perCapita}">
+                    <label>Pro Kopf</label>
+                    <span class="value"
+                          th:text="${#numbers.formatDecimal(perCapita.co2Emissions, 0, 'COMMA', 2, 'POINT') + ' t / Person'}"></span>
+                </div>
+                <div class="info-item" th:if="${shareGlobal}">
+                    <label>Weltanteil</label>
+                    <span class="value"
+                          th:text="${#numbers.formatDecimal(shareGlobal.co2Emissions, 0, 'COMMA', 2, 'POINT') + ' %'}"></span>
+                </div>
+                <div class="info-item" th:if="${population}">
+                    <label>Bevölkerung</label>
+                    <span class="value"
+                          th:text="${#numbers.formatDecimal(population.co2Emissions, 0, 'COMMA', 0, 'POINT')}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sektorendiagramme -->
+        <div class="result-card" th:if="${sectors != null and !#lists.isEmpty(sectors)}">
+            <h2>🏭 Emissionen nach Sektor</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div><canvas id="sectorChart"></canvas></div>
+                <div><canvas id="barChart"></canvas></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Leerzustand -->
+    <div class="result-card empty-state" th:if="${totalEmission == null and error == null}">
+        <p>👆 Geben Sie ein Land ein, um die aktuellsten CO2-Emissionsdaten anzuzeigen</p>
+        <p style="font-size: 0.9em; margin-top: 10px; color: #999;">
+            Beispiele: Germany, France, United States, China, India
+        </p>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script th:inline="javascript" th:if="${sectors != null and !#lists.isEmpty(sectors)}">
+    /*<![CDATA[*/
+    const sectors = /*[[${sectors}]]*/ [];
+
+    const SECTOR_LABELS = {
+        'COAL':         'Kohle',
+        'OIL':          'Öl',
+        'GAS':          'Gas',
+        'CEMENT':       'Zement',
+        'FLARING':      'Gas-Flaring',
+        'SOLID_FUEL':   'Festbrennstoffe',
+        'LIQUID_FUEL':  'Flüssigbrennstoffe',
+        'GAS_FUEL':     'Gas (WB)'
+    };
+
+    const COLORS = ['#667eea','#764ba2','#f093fb','#4facfe','#00f2fe','#43e97b'];
+
+    const labels = sectors.map(s => SECTOR_LABELS[s.dataType] || s.dataType);
+    const values = sectors.map(s => s.co2Emissions);
+
+    new Chart(document.getElementById('sectorChart'), {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: COLORS,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toFixed(2)} MtCO2` }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'MtCO2',
+                data: values,
+                backgroundColor: COLORS,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: 'rgba(0,0,0,0.05)' } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+
+<script th:src="@{/js/theme-toggle.js}"></script>
+<script th:src="@{/js/public-filter.js}"></script>
+</body>
+</html>

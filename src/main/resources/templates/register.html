@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Registrierung - Like Hero To Zero</title>
+
+    <link rel="stylesheet" th:href="@{/css/global.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/register.css}">
+    <script th:src="@{/js/theme-toggle.js}"></script>
+
+</head>
+<body>
+<div class="navbar">
+    <div class="back-link">
+        <a href="/login">← Zurück zum Login</a>
+    </div>
+    <button class="theme-toggle theme-toggle-light" id="theme-toggle">
+        <span class="theme-toggle-icon">🌙</span>
+    </button>
+</div>
+
+<div class="register-container">
+    <header>
+        <h1>🌍 Like Hero To Zero</h1>
+        <p>Registrierung für Wissenschaftler:innen</p>
+    </header>
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+    <div class="success" th:if="${success}" th:text="${success}"></div>
+
+    <form method="post" th:action="@{/register}">
+
+        <div class="form-group">
+            <label for="username">Benutzername:</label>
+            <input autofocus
+                   id="username"
+                   name="username"
+                   placeholder="Wählen Sie einen Benutzernamen"
+                   required
+                   type="text"/>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Passwort:</label>
+            <input id="password"
+                   name="password"
+                   placeholder="Mindestens 4 Zeichen"
+                   required
+                   type="password"/>
+            <div class="password-requirements">
+                <p>ℹ️ Das Passwort muss mindestens 4 Zeichen lang sein</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="passwordConfirm">Passwort bestätigen:</label>
+            <input id="passwordConfirm"
+                   name="passwordConfirm"
+                   placeholder="Passwort wiederholen"
+                   required
+                   type="password"/>
+        </div>
+
+        <div class="button-group">
+            <button type="submit">Registrieren</button>
+            <button onclick="window.location.href='/login'" type="button">Abbrechen</button>
+        </div>
+    </form>
+
+    <div class="info">
+        <p>
+            <strong>💡 Hinweis:</strong> Nach erfolgreicher Registrierung können Sie sich mit Ihren Zugangsdaten anmelden
+            und CO2-Emissionsdaten hinzufügen oder korrigieren.
+        </p>
+    </div>
+</div>
+</body>
+</html>
