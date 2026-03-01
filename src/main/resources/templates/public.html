@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/global.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/pages/public.css}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
 <div class="navbar">
@@ -136,71 +136,6 @@
     </div>
 </div>
 
-<!-- Chart.js -->
-<script th:inline="javascript" th:if="${sectors != null and !#lists.isEmpty(sectors)}">
-    /*<![CDATA[*/
-    const sectors = /*[[${sectors}]]*/ [];
-
-    const SECTOR_LABELS = {
-        'COAL':         'Kohle',
-        'OIL':          'Öl',
-        'GAS':          'Gas',
-        'CEMENT':       'Zement',
-        'FLARING':      'Gas-Flaring',
-        'SOLID_FUEL':   'Festbrennstoffe',
-        'LIQUID_FUEL':  'Flüssigbrennstoffe',
-        'GAS_FUEL':     'Gas (WB)'
-    };
-
-    const COLORS = ['#667eea','#764ba2','#f093fb','#4facfe','#00f2fe','#43e97b'];
-
-    const labels = sectors.map(s => SECTOR_LABELS[s.dataType] || s.dataType);
-    const values = sectors.map(s => s.co2Emissions);
-
-    new Chart(document.getElementById('sectorChart'), {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: COLORS,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                tooltip: {
-                    callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toFixed(2)} MtCO2` }
-                }
-            }
-        }
-    });
-
-    new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'MtCO2',
-                data: values,
-                backgroundColor: COLORS,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { grid: { color: 'rgba(0,0,0,0.05)' } },
-                y: { grid: { display: false } }
-            }
-        }
-    });
-    /*]]>*/
-</script>
 
 <script th:src="@{/js/theme-toggle.js}"></script>
 <script th:src="@{/js/public-filter.js}"></script>

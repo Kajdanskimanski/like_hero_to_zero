@@ -9,8 +9,6 @@
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/pages/data-edit.css}">
     <script th:src="@{/js/theme-toggle.js}"></script>
-
-
 </head>
 <body>
 <div class="navbar">
@@ -19,9 +17,9 @@
         <a href="/dashboard">📊 Dashboard</a>
     </div>
     <div class="nav-link">
-            <span style="color: white; font-weight: bold;">
-                Angemeldet als: <span th:text="${username}"></span>
-            </span>
+        <span style="color: white; font-weight: bold;">
+            Angemeldet als: <span th:text="${username}"></span>
+        </span>
     </div>
     <button class="theme-toggle theme-toggle-light" id="theme-toggle">
         <span class="theme-toggle-icon">🌙</span>
@@ -34,47 +32,147 @@
         <p class="subtitle">CO2-Emissionsdaten korrigieren</p>
 
         <form th:action="@{/data/edit/{id}(id=${emission.id})}" method="post">
+
+            <!-- ── Basisdaten ──────────────────────────────────────────── -->
+            <h2 class="section-title">📋 Basisdaten</h2>
+
             <div class="form-group">
                 <label for="country">Land *</label>
-                <input type="text"
-                       id="country"
-                       name="country"
-                       th:value="${emission.country}"
-                       required />
+                <input type="text" id="country" name="country"
+                       th:value="${emission.country}" required />
             </div>
 
-            <div class="form-group">
-                <label for="year">Jahr *</label>
-                <input type="number"
-                       id="year"
-                       name="year"
-                       th:value="${emission.year}"
-                       min="1900"
-                       max="2100"
-                       required />
-            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Jahr *</label>
+                    <input type="number" id="year" name="year"
+                           th:value="${emission.year}"
+                           min="1900" max="2100" required />
+                </div>
 
-            <div class="form-group">
-                <label for="co2Emissions">CO2-Emissionen (kt) *</label>
-                <input type="number"
-                       id="co2Emissions"
-                       name="co2Emissions"
-                       th:value="${emission.co2Emissions}"
-                       step="0.01"
-                       required />
-                <div class="form-helper">
-                    CO2-Emissionen in Kilotonnen (kt)
+                <div class="form-group">
+                    <label for="dataType">Datentyp</label>
+                    <select id="dataType" name="dataType">
+                        <option value="TOTAL"
+                                th:selected="${emission.dataType == 'TOTAL'}">Gesamt (TOTAL)</option>
+                        <option value="PER_CAPITA"
+                                th:selected="${emission.dataType == 'PER_CAPITA'}">Pro Kopf (PER_CAPITA)</option>
+                        <option value="SHARE_GLOBAL"
+                                th:selected="${emission.dataType == 'SHARE_GLOBAL'}">Weltanteil (SHARE_GLOBAL)</option>
+                        <option value="POPULATION"
+                                th:selected="${emission.dataType == 'POPULATION'}">Bevölkerung (POPULATION)</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="source">Quelle (optional)</label>
-                <input type="text"
-                       id="source"
-                       name="source"
-                       th:value="${emission.source}" />
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="co2Emissions">CO2-Emissionen (kt) *</label>
+                    <input type="number" id="co2Emissions" name="co2Emissions"
+                           th:value="${emission.co2Emissions}"
+                           step="0.01" required />
+                    <div class="form-helper">Gesamtemissionen in Kilotonnen</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="source">Quelle</label>
+                    <input type="text" id="source" name="source"
+                           th:value="${emission.source}" />
+                    <div class="form-helper">Datenquelle (optional)</div>
+                </div>
             </div>
 
+            <!-- ── Erweiterte Kennzahlen ───────────────────────────────── -->
+            <h2 class="section-title">📊 Erweiterte Kennzahlen</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="perCapita">CO2 pro Kopf (t)</label>
+                    <input type="number" id="perCapita" name="perCapita"
+                           th:value="${emission.perCapita}"
+                           step="0.0001" placeholder="z.B. 8.23" />
+                    <div class="form-helper">Tonnen pro Einwohner</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="shareGlobal">Weltanteil (%)</label>
+                    <input type="number" id="shareGlobal" name="shareGlobal"
+                           th:value="${emission.shareGlobal}"
+                           step="0.0001" min="0" max="100"
+                           placeholder="z.B. 1.85" />
+                    <div class="form-helper">Anteil an globalen Emissionen</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="population">Bevölkerung</label>
+                    <input type="number" id="population" name="population"
+                           th:value="${emission.population}"
+                           min="0" placeholder="z.B. 83200000" />
+                    <div class="form-helper">Einwohnerzahl im angegebenen Jahr</div>
+                </div>
+            </div>
+
+            <!-- ── Sektoren ────────────────────────────────────────────── -->
+            <h2 class="section-title">🏭 Emissionen nach Sektor (kt)</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="coal">Kohle</label>
+                    <input type="number" id="coal" name="coal"
+                           th:value="${emission.coal}"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="oil">Öl</label>
+                    <input type="number" id="oil" name="oil"
+                           th:value="${emission.oil}"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="gas">Gas</label>
+                    <input type="number" id="gas" name="gas"
+                           th:value="${emission.gas}"
+                           step="0.01" placeholder="kt" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cement">Zement</label>
+                    <input type="number" id="cement" name="cement"
+                           th:value="${emission.cement}"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="flaring">Abfackeln</label>
+                    <input type="number" id="flaring" name="flaring"
+                           th:value="${emission.flaring}"
+                           step="0.01" placeholder="kt" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="solidFuel">Fester Brennstoff</label>
+                    <input type="number" id="solidFuel" name="solidFuel"
+                           th:value="${emission.solidFuel}"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="liquidFuel">Flüssiger Brennstoff</label>
+                    <input type="number" id="liquidFuel" name="liquidFuel"
+                           th:value="${emission.liquidFuel}"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="gasFuel">Gasförmiger Brennstoff</label>
+                    <input type="number" id="gasFuel" name="gasFuel"
+                           th:value="${emission.gasFuel}"
+                           step="0.01" placeholder="kt" />
+                </div>
+            </div>
+
+            <!-- ── Buttons ─────────────────────────────────────────────── -->
             <div class="button-group">
                 <button type="submit">💾 Änderungen speichern</button>
                 <button type="button" onclick="window.location.href='/data/list'">

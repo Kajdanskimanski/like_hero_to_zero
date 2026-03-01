@@ -8,9 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/global.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/pages/data-add.css}">
-
     <script th:src="@{/js/theme-toggle.js}"></script>
-
 </head>
 <body>
 <div class="navbar">
@@ -19,9 +17,9 @@
         <a href="/">🌍 Öffentliche Ansicht</a>
     </div>
     <div class="nav-link">
-            <span style="color: white; font-weight: bold;">
-                Angemeldet als: <span th:text="${username}"></span>
-            </span>
+        <span style="color: white; font-weight: bold;">
+            Angemeldet als: <span th:text="${username}"></span>
+        </span>
     </div>
     <button class="theme-toggle theme-toggle-light" id="theme-toggle">
         <span class="theme-toggle-icon">🌙</span>
@@ -36,57 +34,135 @@
         <div th:if="${success}" class="success" th:text="${success}"></div>
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
-        <form  th:action="@{/data/add}"  method="post">
+        <form th:action="@{/data/add}" method="post">
+
+            <!-- ── Basis-Daten ─────────────────────────────────────────── -->
+            <h2 class="section-title">📋 Basisdaten</h2>
+
             <div class="form-group">
                 <label for="country">Land *</label>
-                <input type="text"
-                       id="country"
-                       name="country"
-                       placeholder="z.B. Germany, France, United States"
-                       required />
-                <div class="form-helper">
-                    Geben Sie den englischen Ländernamen ein
+                <input type="text" id="country" name="country"
+                       placeholder="z.B. Germany, France, United States" required />
+                <div class="form-helper">Englischen Ländernamen eingeben</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year">Jahr *</label>
+                    <input type="number" id="year" name="year"
+                           min="1900" max="2100"
+                           placeholder="z.B. 2023" required />
+                    <div class="form-helper">Jahr der Messung</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dataType">Datentyp</label>
+                    <select id="dataType" name="dataType">
+                        <option value="TOTAL">Gesamt (TOTAL)</option>
+                        <option value="PER_CAPITA">Pro Kopf (PER_CAPITA)</option>
+                        <option value="SHARE_GLOBAL">Weltanteil (SHARE_GLOBAL)</option>
+                        <option value="POPULATION">Bevölkerung (POPULATION)</option>
+                    </select>
+                    <div class="form-helper">Art des Eintrags</div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="year">Jahr *</label>
-                <input type="number"
-                       id="year"
-                       name="year"
-                       min="1900"
-                       max="2100"
-                       placeholder="z.B. 2023"
-                       required />
-                <div class="form-helper">
-                    Das Jahr der Messung
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="co2Emissions">CO2-Emissionen (kt) *</label>
+                    <input type="number" id="co2Emissions" name="co2Emissions"
+                           step="0.01" placeholder="z.B. 675000.50" required />
+                    <div class="form-helper">Gesamtemissionen in Kilotonnen</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="source">Quelle</label>
+                    <input type="text" id="source" name="source"
+                           placeholder="z.B. World Bank, EPA, Eurostat" />
+                    <div class="form-helper">Datenquelle (optional)</div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="co2Emissions">CO2-Emissionen (kt) *</label>
-                <input type="number"
-                       id="co2Emissions"
-                       name="co2Emissions"
-                       step="0.01"
-                       placeholder="z.B. 675000.50"
-                       required />
-                <div class="form-helper">
-                    CO2-Emissionen in Kilotonnen (kt)
+            <!-- ── Erweiterte Kennzahlen ───────────────────────────────── -->
+            <h2 class="section-title">📊 Erweiterte Kennzahlen</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="perCapita">CO2 pro Kopf (t)</label>
+                    <input type="number" id="perCapita" name="perCapita"
+                           step="0.0001" placeholder="z.B. 8.23" />
+                    <div class="form-helper">Emissionen in Tonnen pro Einwohner</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="shareGlobal">Weltanteil (%)</label>
+                    <input type="number" id="shareGlobal" name="shareGlobal"
+                           step="0.0001" min="0" max="100"
+                           placeholder="z.B. 1.85" />
+                    <div class="form-helper">Anteil an globalen Emissionen</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="population">Bevölkerung</label>
+                    <input type="number" id="population" name="population"
+                           min="0" placeholder="z.B. 83200000" />
+                    <div class="form-helper">Einwohnerzahl im angegebenen Jahr</div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="source">Quelle (optional)</label>
-                <input type="text"
-                       id="source"
-                       name="source"
-                       placeholder="z.B. World Bank, EPA, Eurostat" />
-                <div class="form-helper">
-                    Datenquelle angeben (falls bekannt)
+            <!-- ── Sektoren ────────────────────────────────────────────── -->
+            <h2 class="section-title">🏭 Emissionen nach Sektor (kt)</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="coal">Kohle</label>
+                    <input type="number" id="coal" name="coal"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="oil">Öl</label>
+                    <input type="number" id="oil" name="oil"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="gas">Gas</label>
+                    <input type="number" id="gas" name="gas"
+                           step="0.01" placeholder="kt" />
                 </div>
             </div>
 
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cement">Zement</label>
+                    <input type="number" id="cement" name="cement"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="flaring">Abfackeln</label>
+                    <input type="number" id="flaring" name="flaring"
+                           step="0.01" placeholder="kt" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="solidFuel">Fester Brennstoff</label>
+                    <input type="number" id="solidFuel" name="solidFuel"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="liquidFuel">Flüssiger Brennstoff</label>
+                    <input type="number" id="liquidFuel" name="liquidFuel"
+                           step="0.01" placeholder="kt" />
+                </div>
+                <div class="form-group">
+                    <label for="gasFuel">Gasförmiger Brennstoff</label>
+                    <input type="number" id="gasFuel" name="gasFuel"
+                           step="0.01" placeholder="kt" />
+                </div>
+            </div>
+
+            <!-- ── Buttons ─────────────────────────────────────────────── -->
             <div class="button-group">
                 <button type="submit">✅ Daten speichern</button>
                 <button type="button" onclick="window.location.href='/dashboard'">
@@ -97,8 +173,9 @@
 
         <div class="info-box">
             <p>
-                ℹ️ <strong>Hinweis:</strong> Alle mit * markierten Felder sind Pflichtfelder.
-                Die Daten werden sofort in der Datenbank gespeichert und sind öffentlich einsehbar.
+                ℹ️ <strong>Hinweis:</strong> Nur mit * markierte Felder sind Pflichtfelder.
+                Alle anderen Felder sind optional und können später ergänzt werden.
+                Die Daten sind nach dem Speichern öffentlich einsehbar.
             </p>
         </div>
     </div>
