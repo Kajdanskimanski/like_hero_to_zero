@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller für die Benutzerregistrierung.
+ * Neue Nutzer erhalten automatisch die Rolle "ROLE_SCIENTIST".
+ */
 @Controller
 public class RegistrationController {
 
@@ -17,11 +21,17 @@ public class RegistrationController {
         this.userService = userService;
     }
 
+    /** Zeigt das Registrierungsformular an. */
     @GetMapping("/register")
     public String showRegisterForm() {
         return "register";
     }
 
+    /**
+     * Verarbeitet die Registrierungsanfrage.
+     * Validiert Eingaben serverseitig, bevor der Nutzer angelegt wird.
+     * Bei Erfolg wird zur Login-Seite weitergeleitet.
+     */
     @PostMapping("/register")
     public String register(@RequestParam String username,
                            @RequestParam String password,
@@ -29,38 +39,33 @@ public class RegistrationController {
                            RedirectAttributes redirectAttributes,
                            Model model) {
 
-        // Validierung: Passwörter müssen übereinstimmen
+        // Passwörter müssen übereinstimmen
         if (!password.equals(passwordConfirm)) {
             model.addAttribute("error", "Die Passwörter stimmen nicht überein!");
             return "register";
         }
 
-        // Validierung: Mindestlänge
+        // Mindestlänge des Passworts prüfen
         if (password.length() < 4) {
             model.addAttribute("error", "Das Passwort muss mindestens 4 Zeichen lang sein!");
             return "register";
         }
 
-        // Validierung: Username darf nicht leer sein
+        // Benutzername darf nicht leer sein
         if (username == null || username.trim().isEmpty()) {
             model.addAttribute("error", "Bitte geben Sie einen Benutzernamen ein!");
             return "register";
         }
 
-        try {  // ← HIER FEHLTE DAS try {
-            // Prüfen ob Username bereits existiert
+        try {
+            // Eindeutigkeit des Benutzernamens sicherstellen
             if (userService.findByUsername(username).isPresent()) {
                 model.addAttribute("error", "Benutzername bereits vergeben!");
                 return "register";
             }
 
-            System.out.println("🔍 DEBUG: Versuche User zu erstellen: " + username);
-
-
-            // Neuen Benutzer erstellen
+            // Neuen Benutzer mit Standardrolle anlegen
             userService.createUser(username, password, "ROLE_SCIENTIST");
-
-            System.out.println("✅ DEBUG: User erfolgreich erstellt!");
 
             redirectAttributes.addFlashAttribute("success",
                     "Registrierung erfolgreich! Bitte melden Sie sich an.");
@@ -68,8 +73,6 @@ public class RegistrationController {
             return "redirect:/login";
 
         } catch (Exception e) {
-            System.err.println("❌ DEBUG: Fehler bei Registrierung: " + e.getMessage());
-            e.printStackTrace();
             model.addAttribute("error", "Registrierung fehlgeschlagen: " + e.getMessage());
             return "register";
         }

@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service für die Benutzerverwaltung.
+ * Kapselt den Datenbankzugriff und stellt sicher, dass Passwörter
+ * niemals im Klartext gespeichert werden.
+ */
 @Service
 public class UserService {
 
@@ -19,16 +24,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Benutzer finden (für Login)
+    // Wird bei Login und Registrierung zur Eindeutigkeitsprüfung genutzt
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    // Benutzer anlegen (Passwort wird verschlüsselt)
+    /**
+     * Legt einen neuen Benutzer an.
+     * Das Passwort wird vor dem Speichern mit BCrypt verschlüsselt –
+     * das Klartextpasswort wird nie persistiert.
+     */
     public User createUser(String username, String rawPassword, String role) {
-        System.out.println("CREATE USER WIRD AUFGERUFEN");
         String encodedPassword = passwordEncoder.encode(rawPassword);
-
         User user = new User(username, encodedPassword, role);
         return userRepository.save(user);
     }

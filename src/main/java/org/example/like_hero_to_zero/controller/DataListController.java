@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Controller für die Datenverwaltung von Emissionseinträgen.
+ * Stellt Ansichten für eigene und globale Daten bereit und
+ * ermöglicht das Bearbeiten und Löschen eigener Einträge.
+ */
 @Controller
 @RequestMapping("/data")
 public class DataListController {
@@ -21,7 +25,9 @@ public class DataListController {
         this.emissionService = emissionService;
     }
 
-    // Meine Daten anzeigen
+    /**
+     * Zeigt alle Emissionseinträge des eingeloggten Nutzers an.
+     */
     @GetMapping("/my-data")
     public String showMyData(Model model, Authentication authentication) {
         String username = authentication.getName();
@@ -35,7 +41,12 @@ public class DataListController {
         return "data-list";
     }
 
-    // Globale Daten mit Filtern - NUR DIESE EINE METHODE!
+    /**
+     * Zeigt alle freigegebenen globalen Emissionsdaten mit optionalen Filterparametern.
+     * Filter: Land, Quelle, Jahreszeitraum (von/bis).
+     * Zusätzlich werden alle verfügbaren Filter-Optionen ans Template übergeben,
+     * damit Dropdowns und Felder vorausgefüllt werden können.
+     */
     @GetMapping("/global-data")
     public String showGlobalData(
             @RequestParam(required = false) String country,
@@ -45,12 +56,11 @@ public class DataListController {
             Model model,
             Authentication authentication) {
 
-        // Gefilterte Daten abrufen
         List<Emission> globalEmissions = emissionService.getFilteredGlobalData(
                 country, source, yearFrom, yearTo
         );
 
-        // Filter-Optionen für Dropdowns
+        // Filter-Optionen für die Dropdown-Menüs im Template laden
         List<String> countries = emissionService.getAllCountries();
         List<String> sources = emissionService.getAllSources();
         Integer minYear = emissionService.getMinYear();
@@ -60,14 +70,12 @@ public class DataListController {
         model.addAttribute("emissions", globalEmissions);
         model.addAttribute("totalRecords", globalEmissions.size());
         model.addAttribute("viewType", "global");
-
-        // Filter-Optionen
         model.addAttribute("countries", countries);
         model.addAttribute("sources", sources);
         model.addAttribute("minYear", minYear);
         model.addAttribute("maxYear", maxYear);
 
-        // Aktuelle Filter-Werte
+        // Aktive Filterwerte zurück ans Template geben, damit Formularfelder befüllt bleiben
         model.addAttribute("selectedCountry", country);
         model.addAttribute("selectedSource", source);
         model.addAttribute("selectedYearFrom", yearFrom);
@@ -76,23 +84,27 @@ public class DataListController {
         return "data-list";
     }
 
-    // Daten löschen (nur eigene!)
+    /**
+     * Löscht einen Emissionseintrag anhand seiner ID.
+     * Die Service-Schicht prüft, ob der Nutzer berechtigt ist, diesen Eintrag zu löschen.
+     */
     @PostMapping("/delete/{id}")
     public String deleteEmission(@PathVariable Long id,
                                  Authentication authentication,
                                  RedirectAttributes redirectAttributes) {
         try {
             emissionService.deleteEmission(id, authentication.getName());
-            redirectAttributes.addFlashAttribute("success",
-                    "Datensatz erfolgreich gelöscht!");
+            redirectAttributes.addFlashAttribute("success", "Datensatz erfolgreich gelöscht!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Fehler: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Fehler: " + e.getMessage());
         }
         return "redirect:/data/my-data";
     }
 
-    // Bearbeiten-Form anzeigen (nur eigene!)
+    /**
+     * Zeigt das Bearbeitungsformular für einen vorhandenen Emissionseintrag.
+     * Zugriff wird verweigert, wenn der Nutzer nicht der Eigentümer des Eintrags ist.
+     */
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id,
                                Model model,
@@ -101,51 +113,71 @@ public class DataListController {
 
         String username = authentication.getName();
 
+        // Berechtigungsprüfung vor dem Laden der Daten
         if (!emissionService.canEdit(id, username)) {
             redirectAttributes.addFlashAttribute("error",
                     "Sie haben keine Berechtigung, diese Daten zu bearbeiten!");
             return "redirect:/data/my-data";
         }
 
-        Optional<Emission> emission = emissionService.getAllEmissions()
-                .stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst();
-
-        if (emission.isEmpty()) {
-            return "redirect:/data/my-data";
-        }
+        Emission emission = emissionService.getEmissionById(id);
 
         model.addAttribute("username", username);
-        model.addAttribute("emission", emission.get());
+        model.addAttribute("emission", emission);
         return "data-edit";
     }
 
-    // Daten aktualisieren (nur eigene!)
+    /**
+     * Speichert die Änderungen eines bearbeiteten Emissionseintrags.
+     * Felder ohne Eingabe werden mit Standardwerten belegt ("N/A" bzw. "TOTAL").
+     * Die Berechtigungsprüfung erfolgt in der Service-Schicht.
+     */
     @PostMapping("/edit/{id}")
-    public String updateEmission(@PathVariable Long id,
-                                 @RequestParam String country,
-                                 @RequestParam Integer year,
-                                 @RequestParam Double co2Emissions,
-                                 @RequestParam(required = false) String source,
-                                 Authentication authentication,
-                                 RedirectAttributes redirectAttributes) {
+    public String updateEmission(
+            @PathVariable Long id,
+            @RequestParam String country,
+            @RequestParam Integer year,
+            @RequestParam Double co2Emissions,
+            @RequestParam(required = false) String source,
+            @RequestParam(required = false) String dataType,
+            @RequestParam(required = false) Double perCapita,
+            @RequestParam(required = false) Double shareGlobal,
+            @RequestParam(required = false) Long population,
+            @RequestParam(required = false) Double coal,
+            @RequestParam(required = false) Double oil,
+            @RequestParam(required = false) Double gas,
+            @RequestParam(required = false) Double cement,
+            @RequestParam(required = false) Double flaring,
+            @RequestParam(required = false) Double solidFuel,
+            @RequestParam(required = false) Double liquidFuel,
+            @RequestParam(required = false) Double gasFuel,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
         try {
             Emission updatedData = new Emission();
             updatedData.setCountry(country);
             updatedData.setYear(year);
             updatedData.setCo2Emissions(co2Emissions);
             updatedData.setSource(source != null && !source.trim().isEmpty() ? source : "N/A");
+            updatedData.setDataType(dataType != null && !dataType.trim().isEmpty() ? dataType : "TOTAL");
+            updatedData.setPerCapita(perCapita);
+            updatedData.setShareGlobal(shareGlobal);
+            updatedData.setPopulation(population);
+            updatedData.setCoal(coal);
+            updatedData.setOil(oil);
+            updatedData.setGas(gas);
+            updatedData.setCement(cement);
+            updatedData.setFlaring(flaring);
+            updatedData.setSolidFuel(solidFuel);
+            updatedData.setLiquidFuel(liquidFuel);
+            updatedData.setGasFuel(gasFuel);
 
             emissionService.updateEmission(id, updatedData, authentication.getName());
 
-            redirectAttributes.addFlashAttribute("success",
-                    "Datensatz erfolgreich aktualisiert!");
+            redirectAttributes.addFlashAttribute("success", "Datensatz erfolgreich aktualisiert!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Fehler: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Fehler: " + e.getMessage());
         }
-
         return "redirect:/data/my-data";
     }
 }
