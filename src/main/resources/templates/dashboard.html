@@ -14,16 +14,15 @@
 
 </head>
 <body>
+<canvas id="co2-canvas"></canvas>
 <div class="navbar">
     <div class="nav-link">
         <a href="/">← Zur öffentlichen Ansicht</a>
     </div>
-
-    <div class="nav-link" style="display: flex; align-items: center; gap: 15px;">
-        <span style="color: white; font-weight: bold;">
+    <span style="color: white; font-weight: bold;">
                 Angemeldet als: <span th:text="${username}"></span>
             </span>
-
+    <div class="nav-link" style="display: flex; align-items: center; gap: 15px;">
         <form class="logout-form" method="post" style="margin: 0;" th:action="@{/logout}">
             <button type="submit">Abmelden</button>
         </form>
@@ -62,5 +61,6 @@
         </div>
     </div>
 </div>
+<script th:src="@{/js/co2-background.js}"></script>
 </body>
 </html>

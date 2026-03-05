@@ -11,6 +11,7 @@
 
 </head>
 <body>
+<canvas id="co2-canvas"></canvas>
 <div class="navbar">
     <div class="login-link">
         <a href="/login">🔐 Wissenschaftler Login</a>
@@ -117,12 +118,15 @@
         </div>
 
         <!-- Sektorendiagramme -->
-        <div class="result-card" th:if="${sectors != null and !#lists.isEmpty(sectors)}">
+        <div class="result-card">
             <h2>🏭 Emissionen nach Sektor</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div th:if="${sectors != null and !#lists.isEmpty(sectors)}"
+                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div><canvas id="sectorChart"></canvas></div>
                 <div><canvas id="barChart"></canvas></div>
             </div>
+            <p th:unless="${sectors != null and !#lists.isEmpty(sectors)}"
+               style="color: #999; font-style: italic;">Keine Sektordaten verfügbar.</p>
         </div>
 
     </div>
@@ -140,4 +144,5 @@
 <script th:src="@{/js/theme-toggle.js}"></script>
 <script th:src="@{/js/public-filter.js}"></script>
 </body>
+<script th:src="@{/js/co2-background.js}"></script>
 </html>

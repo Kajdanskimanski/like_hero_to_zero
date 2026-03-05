@@ -8,13 +8,15 @@
     <link rel="stylesheet" th:href="@{/css/global.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/pages/data-edit.css}">
+
     <script th:src="@{/js/theme-toggle.js}"></script>
 </head>
 <body>
+<canvas id="co2-canvas"></canvas>
 <div class="navbar">
     <div class="nav-link">
-        <a href="/data/list">← Zurück zur Übersicht</a>
-        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/dashboard">← Zurück zum Dashboard</a>
+        <a href="/">🌍 Öffentliche Ansicht</a>
     </div>
     <div class="nav-link">
         <span style="color: white; font-weight: bold;">
@@ -175,12 +177,13 @@
             <!-- ── Buttons ─────────────────────────────────────────────── -->
             <div class="button-group">
                 <button type="submit">💾 Änderungen speichern</button>
-                <button type="button" onclick="window.location.href='/data/list'">
+                <button type="button" onclick="window.location.href='/data/my-data'">
                     Abbrechen
                 </button>
             </div>
         </form>
     </div>
 </div>
+<script th:src="@{/js/co2-background.js}"></script>
 </body>
 </html>

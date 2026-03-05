@@ -2,7 +2,7 @@
     display: flex;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-xl);
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .tab {
@@ -16,59 +16,103 @@
     text-decoration: none;
     color: var(--text-secondary);
     font-size: 1.1em;
-}
 
-.tab:hover {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
+    &:hover {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
 
-.tab.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
+    &.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
 }
 
 .filter-section {
-    background-color: var(--bg-grey);
-    padding: 25px;
-    border-radius: var(--radius-medium);
-    margin-bottom: var(--spacing-xl);
-    display: flex;
-    gap: var(--spacing-md);
-    align-items: center;
-    flex-wrap: wrap;
+    input[type="text"],
+    input[type="number"],
+    select {
+        background-color: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: var(--text-primary);
+        border-radius: var(--radius-medium);
+        padding: 12px;
+        font-size: var(--font-size-base);
+        width: 100%;
+        transition: border-color var(--transition-normal), background-color var(--transition-normal);
+
+        &:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        & option {
+            background-color: var(--bg-white);
+            color: var(--text-primary);
+        }
+    }
 }
 
-.filter-section form {
-    display: flex;
-    gap: var(--spacing-md);
-    flex: 1;
+[data-theme="dark"] .filter-section {
+    input[type="text"],
+    input[type="number"],
+    select {
+        background-color: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.15);
+
+        &:focus {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+    }
 }
 
 .stats {
     display: flex;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
+
+    & .stat-box {
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
 }
 
-.stats .stat-box {
-    flex: 1;
+[data-theme="dark"] .stats .stat-box {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .table-container {
     overflow-x: auto;
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-large);
+    padding: var(--spacing-lg);
+}
+
+[data-theme="dark"] .table-container {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-xs);
     flex-wrap: wrap;
 }
 
 .btn-edit {
-    background-color: #4CAF50;
-    color: white;
-    padding: 8px 15px;
+    background-color: var(--success-color);
+    color: var(--bg-white);
+    padding: var(--spacing-xs) var(--spacing-md);
     border: none;
     border-radius: var(--radius-small);
     cursor: pointer;
@@ -76,79 +120,95 @@
     font-size: var(--font-size-small);
     transition: background-color var(--transition-normal);
     display: inline-block;
-}
 
-.btn-edit:hover {
-    background-color: #45a049;
+    &:hover {
+        background-color: var(--success-bg);
+        color: var(--success-color);
+    }
 }
 
 .btn-delete {
-    background-color: #f44336;
-    color: white;
-    padding: 8px 15px;
+    background-color: var(--error-color);
+    color: var(--bg-white);
+    padding: var(--spacing-xs) var(--spacing-md);
     border: none;
     border-radius: var(--radius-small);
     cursor: pointer;
     font-size: var(--font-size-small);
     transition: background-color var(--transition-normal);
-}
 
-.btn-delete:hover {
-    background-color: #da190b;
+    &:hover {
+        background-color: var(--error-bg);
+        color: var(--error-color);
+    }
 }
 
 .view-only {
     color: var(--text-light);
     font-style: italic;
-    padding: 8px 15px;
+    padding: var(--spacing-xs) var(--spacing-md);
 }
 
 .empty-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 60px var(--spacing-lg);
     color: var(--text-secondary);
-}
 
-.empty-state h2 {
-    font-size: 2em;
-    margin-bottom: var(--spacing-md);
-    color: var(--text-primary);
-}
+    & h2 {
+        font-size: 2em;
+        margin-bottom: var(--spacing-md);
+        color: var(--text-primary);
+    }
 
-.empty-state p {
-    margin-bottom: var(--spacing-sm);
-}
+    & p {
+        margin-bottom: var(--spacing-sm);
+    }
 
-.empty-state .btn-primary {
-    margin-top: var(--spacing-lg);
+    & .btn-primary {
+        margin-top: var(--spacing-lg);
+    }
 }
 
 .badge {
     display: inline-block;
-    padding: 4px 8px;
+    padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-small);
     font-size: 0.85em;
     font-weight: bold;
+
+    &.badge-user {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--info-color);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    &.badge-system {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
 }
 
-.badge-user {
-    background-color: var(--info-bg);
-    color: var(--info-color);
-}
+[data-theme="dark"] .badge {
+    &.badge-user {
+        background-color: rgba(100, 160, 255, 0.15);
+        border-color: rgba(100, 160, 255, 0.25);
+    }
 
-.badge-system {
-    background-color: var(--bg-grey);
-    color: var(--text-secondary);
+    &.badge-system {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 @media (max-width: 768px) {
     .filter-section {
         flex-direction: column;
-    }
 
-    .filter-section form {
-        width: 100%;
-        flex-direction: column;
+        & form {
+            width: 100%;
+            flex-direction: column;
+        }
     }
 
     .stats {
@@ -159,7 +219,30 @@
         flex-direction: column;
     }
 
-    .btn-edit, .btn-delete {
+    .btn-edit,
+    .btn-delete {
         width: 100%;
     }
+}
+
+.info {
+    background-color: rgba(102, 126, 234, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(102, 126, 234, 0.4);
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-primary);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-medium);
+    margin-bottom: var(--spacing-lg);
+
+    & strong {
+        color: white;
+    }
+}
+
+[data-theme="dark"] .info {
+    background-color: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.25);
+    border-left-color: var(--primary-color);
 }

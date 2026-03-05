@@ -1,46 +1,70 @@
 .dashboard-header {
-    background-color: var(--bg-white);
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: var(--spacing-xl);
     border-radius: var(--radius-large);
     box-shadow: var(--shadow-large);
     margin-bottom: var(--spacing-xl);
+
+    & h1 {
+        color: var(--text-primary);
+        font-size: 2.5em;
+        margin-bottom: var(--spacing-sm);
+    }
 }
 
-.dashboard-header h1 {
-    color: var(--text-primary);
-    font-size: 2.5em;
-    margin-bottom: var(--spacing-sm);
+[data-theme="dark"] .dashboard-header {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .welcome {
-    background: var(--gradient-bg);
-    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--text-primary);
     padding: var(--spacing-lg);
     border-radius: var(--radius-medium);
     margin-top: var(--spacing-lg);
+
+    & p {
+        margin: var(--spacing-xs) 0;
+        font-size: 1.1em;
+    }
+
+    & strong {
+        font-size: 1.2em;
+    }
 }
 
-.welcome p {
-    margin: 5px 0;
-    font-size: 1.1em;
-}
-
-.welcome strong {
-    font-size: 1.2em;
+[data-theme="dark"] .welcome {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .functions-card {
-    background-color: var(--bg-white);
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: var(--spacing-xl);
     border-radius: var(--radius-large);
     box-shadow: var(--shadow-large);
     margin-bottom: var(--spacing-xl);
+
+    & h2 {
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-lg);
+        font-size: 1.8em;
+    }
 }
 
-.functions-card h2 {
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-lg);
-    font-size: 1.8em;
+[data-theme="dark"] .functions-card {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .function-grid {
@@ -51,41 +75,57 @@
 }
 
 .function-item {
-    background: var(--gradient-bg);
-    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--text-primary);
     padding: 25px;
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-small);
     transition: transform var(--transition-fast);
     cursor: pointer;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-medium);
+    }
+
+    & h3 {
+        font-size: 1.3em;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    & p {
+        opacity: 0.9;
+        line-height: 1.6;
+    }
 }
 
-.function-item:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-medium);
-}
-
-.function-item h3 {
-    font-size: 1.3em;
-    margin-bottom: var(--spacing-sm);
-}
-
-.function-item p {
-    opacity: 0.9;
-    line-height: 1.6;
+[data-theme="dark"] .function-item {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .quick-actions {
-    background-color: var(--card-bg);
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: var(--spacing-xl);
     border-radius: var(--radius-large);
     box-shadow: var(--shadow-large);
+
+    & h2 {
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-lg);
+        font-size: 1.8em;
+    }
 }
 
-.quick-actions h2 {
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-lg);
-    font-size: 1.8em;
+[data-theme="dark"] .quick-actions {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .action-buttons {
@@ -96,53 +136,55 @@
 
 .action-btn {
     background-color: var(--primary-color);
-    color: white;
-    padding: 15px 30px;
+    color: var(--bg-white);
+    padding: var(--spacing-md) var(--spacing-xl);
     text-decoration: none;
     border-radius: var(--radius-medium);
     font-weight: bold;
     transition: background-color var(--transition-normal);
     display: inline-block;
+
+    &:hover {
+        background-color: var(--primary-dark);
+    }
 }
 
-.action-btn:hover {
-    background-color: var(--primary-dark);
-}
+.public-link {
+    & a {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--bg-white);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: 2px solid var(--bg-white);
+        border-radius: var(--radius-pill);
+        font-weight: bold;
+        cursor: pointer;
+        transition: all var(--transition-normal);
 
-.public-link a {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border: 2px solid white;
-    border-radius: var(--radius-pill);
-    font-weight: bold;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-}
-
-.public-link a:hover {
-    background-color: white;
-    color: var(--primary-color);
+        &:hover {
+            background-color: var(--bg-white);
+            color: var(--primary-color);
+        }
+    }
 }
 
 .logout-form {
     margin: 0;
-}
 
-.logout-form button {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border: 2px solid white;
-    border-radius: var(--radius-pill);
-    font-weight: bold;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-}
+    & button {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--bg-white);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: 2px solid var(--bg-white);
+        border-radius: var(--radius-pill);
+        font-weight: bold;
+        cursor: pointer;
+        transition: all var(--transition-normal);
 
-.logout-form button:hover {
-    background-color: white;
-    color: var(--primary-color);
+        &:hover {
+            background-color: var(--bg-white);
+            color: var(--primary-color);
+        }
+    }
 }
 
 @media (max-width: 768px) {
@@ -151,8 +193,10 @@
         gap: var(--spacing-sm);
     }
 
-    .dashboard-header h1 {
-        font-size: 2em;
+    .dashboard-header {
+        & h1 {
+            font-size: 2em;
+        }
     }
 
     .function-grid {
