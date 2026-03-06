@@ -58,22 +58,22 @@
 
                 <div class="form-group">
                     <label for="dataType">Datentyp</label>
-                    <select id="dataType" name="dataType">
+                    <select id="dataType" name="dataType" onchange="updateFields()">
                         <option value="TOTAL">Gesamt (TOTAL)</option>
                         <option value="PER_CAPITA">Pro Kopf (PER_CAPITA)</option>
                         <option value="SHARE_GLOBAL">Weltanteil (SHARE_GLOBAL)</option>
                         <option value="POPULATION">Bevölkerung (POPULATION)</option>
                     </select>
-                    <div class="form-helper">Art des Eintrags</div>
+                    <div class="form-helper">Art des Eintrags – beeinflusst sichtbare Felder</div>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="co2Emissions">CO2-Emissionen (kt) *</label>
+                    <label for="co2Emissions" id="co2Label">CO2-Emissionen (kt) *</label>
                     <input type="number" id="co2Emissions" name="co2Emissions"
                            step="0.01" placeholder="z.B. 675000.50" required />
-                    <div class="form-helper">Gesamtemissionen in Kilotonnen</div>
+                    <div class="form-helper" id="co2Helper">Gesamtemissionen in Kilotonnen</div>
                 </div>
 
                 <div class="form-group">
@@ -85,102 +85,135 @@
             </div>
 
             <!-- ── Erweiterte Kennzahlen ───────────────────────────────── -->
-            <h2 class="section-title">📊 Erweiterte Kennzahlen</h2>
+            <div id="section-extended">
+                <h2 class="section-title">📊 Erweiterte Kennzahlen</h2>
+                <div class="form-row">
+                    <div class="form-group" id="field-perCapita">
+                        <label for="perCapita">CO2 pro Kopf (t)</label>
+                        <input type="number" id="perCapita" name="perCapita"
+                               step="0.0001" placeholder="z.B. 8.23" />
+                        <div class="form-helper">Emissionen in Tonnen pro Einwohner</div>
+                    </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="perCapita">CO2 pro Kopf (t)</label>
-                    <input type="number" id="perCapita" name="perCapita"
-                           step="0.0001" placeholder="z.B. 8.23" />
-                    <div class="form-helper">Emissionen in Tonnen pro Einwohner</div>
-                </div>
+                    <div class="form-group" id="field-shareGlobal">
+                        <label for="shareGlobal">Weltanteil (%)</label>
+                        <input type="number" id="shareGlobal" name="shareGlobal"
+                               step="0.0001" min="0" max="100"
+                               placeholder="z.B. 1.85" />
+                        <div class="form-helper">Anteil an globalen Emissionen</div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="shareGlobal">Weltanteil (%)</label>
-                    <input type="number" id="shareGlobal" name="shareGlobal"
-                           step="0.0001" min="0" max="100"
-                           placeholder="z.B. 1.85" />
-                    <div class="form-helper">Anteil an globalen Emissionen</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="population">Bevölkerung</label>
-                    <input type="number" id="population" name="population"
-                           min="0" placeholder="z.B. 83200000" />
-                    <div class="form-helper">Einwohnerzahl im angegebenen Jahr</div>
+                    <div class="form-group" id="field-population">
+                        <label for="population">Bevölkerung</label>
+                        <input type="number" id="population" name="population"
+                               min="0" placeholder="z.B. 83200000" />
+                        <div class="form-helper">Einwohnerzahl im angegebenen Jahr</div>
+                    </div>
                 </div>
             </div>
 
             <!-- ── Sektoren ────────────────────────────────────────────── -->
-            <h2 class="section-title">🏭 Emissionen nach Sektor (kt)</h2>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="coal">Kohle</label>
-                    <input type="number" id="coal" name="coal"
-                           step="0.01" placeholder="kt" />
+            <div id="section-sectors">
+                <h2 class="section-title">🏭 Emissionen nach Sektor (kt)</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="coal">Kohle</label>
+                        <input type="number" id="coal" name="coal" step="0.01" placeholder="kt" />
+                    </div>
+                    <div class="form-group">
+                        <label for="oil">Öl</label>
+                        <input type="number" id="oil" name="oil" step="0.01" placeholder="kt" />
+                    </div>
+                    <div class="form-group">
+                        <label for="gas">Gas</label>
+                        <input type="number" id="gas" name="gas" step="0.01" placeholder="kt" />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="oil">Öl</label>
-                    <input type="number" id="oil" name="oil"
-                           step="0.01" placeholder="kt" />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cement">Zement</label>
+                        <input type="number" id="cement" name="cement" step="0.01" placeholder="kt" />
+                    </div>
+                    <div class="form-group">
+                        <label for="flaring">Abfackeln</label>
+                        <input type="number" id="flaring" name="flaring" step="0.01" placeholder="kt" />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="gas">Gas</label>
-                    <input type="number" id="gas" name="gas"
-                           step="0.01" placeholder="kt" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="cement">Zement</label>
-                    <input type="number" id="cement" name="cement"
-                           step="0.01" placeholder="kt" />
-                </div>
-                <div class="form-group">
-                    <label for="flaring">Abfackeln</label>
-                    <input type="number" id="flaring" name="flaring"
-                           step="0.01" placeholder="kt" />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="solidFuel">Fester Brennstoff</label>
-                    <input type="number" id="solidFuel" name="solidFuel"
-                           step="0.01" placeholder="kt" />
-                </div>
-                <div class="form-group">
-                    <label for="liquidFuel">Flüssiger Brennstoff</label>
-                    <input type="number" id="liquidFuel" name="liquidFuel"
-                           step="0.01" placeholder="kt" />
-                </div>
-                <div class="form-group">
-                    <label for="gasFuel">Gasförmiger Brennstoff</label>
-                    <input type="number" id="gasFuel" name="gasFuel"
-                           step="0.01" placeholder="kt" />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="solidFuel">Fester Brennstoff</label>
+                        <input type="number" id="solidFuel" name="solidFuel" step="0.01" placeholder="kt" />
+                    </div>
+                    <div class="form-group">
+                        <label for="liquidFuel">Flüssiger Brennstoff</label>
+                        <input type="number" id="liquidFuel" name="liquidFuel" step="0.01" placeholder="kt" />
+                    </div>
+                    <div class="form-group">
+                        <label for="gasFuel">Gasförmiger Brennstoff</label>
+                        <input type="number" id="gasFuel" name="gasFuel" step="0.01" placeholder="kt" />
+                    </div>
                 </div>
             </div>
 
             <!-- ── Buttons ─────────────────────────────────────────────── -->
             <div class="button-group">
                 <button type="submit">Daten speichern</button>
-                <button type="button" onclick="window.location.href='/dashboard'">
-                    Abbrechen
-                </button>
+                <button type="button" onclick="window.location.href='/dashboard'">Abbrechen</button>
             </div>
         </form>
 
         <div class="info-box">
             <p>
                 ℹ️ <strong>Hinweis:</strong> Nur mit * markierte Felder sind Pflichtfelder.
-                Alle anderen Felder sind optional und können später ergänzt werden.
-                Die Daten sind nach dem Speichern öffentlich einsehbar.
+                Die sichtbaren Felder passen sich automatisch zum gewählten Datentyp an.
+                Die Daten müssen nach dem Speichern vom Admin freigegeben werden.
             </p>
         </div>
     </div>
 </div>
+
 <script th:src="@{/js/co2-background.js}"></script>
+<script>
+    function updateFields() {
+        const type = document.getElementById('dataType').value;
+
+        const extended  = document.getElementById('section-extended');
+        const sectors   = document.getElementById('section-sectors');
+        const perCapita = document.getElementById('field-perCapita');
+        const share     = document.getElementById('field-shareGlobal');
+        const pop       = document.getElementById('field-population');
+        const co2Label  = document.getElementById('co2Label');
+        const co2Helper = document.getElementById('co2Helper');
+
+        // Alles erstmal ausblenden
+        extended.style.display  = 'none';
+        sectors.style.display   = 'none';
+        perCapita.style.display = 'none';
+        share.style.display     = 'none';
+        pop.style.display       = 'none';
+
+        if (type === 'TOTAL') {
+            co2Label.textContent  = 'CO2-Emissionen (kt) *';
+            co2Helper.textContent = 'Gesamtemissionen in Kilotonnen';
+            extended.style.display = 'block';
+            sectors.style.display  = 'block';
+            perCapita.style.display = 'block';
+            share.style.display     = 'block';
+            pop.style.display       = 'block';
+        } else if (type === 'PER_CAPITA') {
+            co2Label.textContent  = 'CO2 pro Kopf (t) *';
+            co2Helper.textContent = 'Emissionen in Tonnen pro Einwohner';
+        } else if (type === 'SHARE_GLOBAL') {
+            co2Label.textContent  = 'Weltanteil (%) *';
+            co2Helper.textContent = 'Anteil an globalen Emissionen (0–100)';
+        } else if (type === 'POPULATION') {
+            co2Label.textContent  = 'Bevölkerung *';
+            co2Helper.textContent = 'Einwohnerzahl im angegebenen Jahr';
+        }
+    }
+
+    // Beim Laden direkt anwenden
+    updateFields();
+</script>
 </body>
 </html>
