@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller für den öffentlichen Bereich der Anwendung.
@@ -37,8 +39,8 @@ public class PublicController {
 
     /**
      * Verarbeitet eine Suchanfrage und bereitet die Ergebnisse für die Anzeige auf.
-     * Die Emissionsdaten werden nach dataType aufgeteilt, damit das Template
-     * Gesamtwert, Pro-Kopf, Weltanteil, Bevölkerung und Sektoren separat darstellen kann.
+     * Sektordaten werden direkt aus den Feldern des Eintrags gelesen (coal, oil, gas, ...),
+     * da sie nicht als separate dataType-Einträge gespeichert sind.
      */
     @GetMapping("/search")
     public String search(@RequestParam String country,
@@ -88,12 +90,19 @@ public class PublicController {
                 .findFirst()
                 .ifPresent(e -> model.addAttribute("population", e));
 
-        // Alle Sektor-Einträge gesammelt – werden z.B. als Balkendiagramm dargestellt
-        List<Emission> sectors = emissions.stream()
-                .filter(e -> e.getDataType() != null && List.of("COAL", "OIL", "GAS", "CEMENT", "FLARING",
-                                "SOLID_FUEL", "LIQUID_FUEL", "GAS_FUEL")
-                        .contains(e.getDataType()))
-                .toList();
+        // Sektordaten direkt aus den Feldern des ersten Eintrags lesen.
+        // Die Felder coal, oil, gas etc. sind direkt in der Emission-Entity gespeichert
+        // und müssen nicht als separate dataType-Einträge vorliegen.
+        Emission anyEntry = emissions.get(0);
+        List<Map<String, Object>> sectors = new ArrayList<>();
+        if (anyEntry.getCoal() != null)       sectors.add(Map.of("name", "Kohle",                 "value", anyEntry.getCoal()));
+        if (anyEntry.getOil() != null)        sectors.add(Map.of("name", "Öl",                    "value", anyEntry.getOil()));
+        if (anyEntry.getGas() != null)        sectors.add(Map.of("name", "Gas",                   "value", anyEntry.getGas()));
+        if (anyEntry.getCement() != null)     sectors.add(Map.of("name", "Zement",                "value", anyEntry.getCement()));
+        if (anyEntry.getFlaring() != null)    sectors.add(Map.of("name", "Abfackeln",             "value", anyEntry.getFlaring()));
+        if (anyEntry.getSolidFuel() != null)  sectors.add(Map.of("name", "Fester Brennstoff",     "value", anyEntry.getSolidFuel()));
+        if (anyEntry.getLiquidFuel() != null) sectors.add(Map.of("name", "Flüssiger Brennstoff",  "value", anyEntry.getLiquidFuel()));
+        if (anyEntry.getGasFuel() != null)    sectors.add(Map.of("name", "Gasförmiger Brennstoff","value", anyEntry.getGasFuel()));
         model.addAttribute("sectors", sectors);
 
         return "public";

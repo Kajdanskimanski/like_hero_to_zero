@@ -120,10 +120,18 @@
         <!-- Sektorendiagramme -->
         <div class="result-card">
             <h2>🏭 Emissionen nach Sektor</h2>
-            <div th:if="${sectors != null and !#lists.isEmpty(sectors)}"
-                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                <div><canvas id="sectorChart"></canvas></div>
-                <div><canvas id="barChart"></canvas></div>
+            <div th:if="${sectors != null and !#lists.isEmpty(sectors)}">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px;">
+                    <div th:each="sector : ${sectors}" class="info-item">
+                        <label th:text="${sector.name}"></label>
+                        <span class="value"
+                              th:text="${#numbers.formatDecimal(sector.value, 0, 'COMMA', 2, 'POINT') + ' kt'}"></span>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div><canvas id="sectorChart"></canvas></div>
+                    <div><canvas id="barChart"></canvas></div>
+                </div>
             </div>
             <p th:unless="${sectors != null and !#lists.isEmpty(sectors)}"
                style="color: #999; font-style: italic;">Keine Sektordaten verfügbar.</p>

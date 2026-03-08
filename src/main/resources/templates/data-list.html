@@ -29,110 +29,17 @@
 
 <div class="container">
     <div class="card">
-        <h1>📋 Datenübersicht</h1>
-        <p class="subtitle">CO2-Emissionsdaten verwalten</p>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <a href="/data/my-data"
-               th:classappend="${viewType == 'my'} ? 'active' : ''"
-               class="tab">
-                📝 Meine Daten
-            </a>
-            <a href="/data/global-data"
-               th:classappend="${viewType == 'global'} ? 'active' : ''"
-               class="tab">
-                🌍 Globale Daten (World Bank API)
-            </a>
-        </div>
-
-        <!-- Filter (nur bei globalen Daten) -->
-        <div th:if="${viewType == 'global'}" class="filter-section">
-            <h3 style="width: 100%; margin-bottom: var(--spacing-md); color: var(--text-primary);">
-                🔍 Filter
-            </h3>
-            <form action="/data/global-data" method="get" style="width: 100%;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="country">Land</label>
-                        <select name="country" id="country">
-                            <option value="">🌍 Alle Länder</option>
-                            <option th:each="c : ${countries}"
-                                    th:value="${c}"
-                                    th:text="${c}"
-                                    th:selected="${c == selectedCountry}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="source">Quelle</label>
-                        <select name="source" id="source">
-                            <option value="">📚 Alle Quellen</option>
-                            <option th:each="s : ${sources}"
-                                    th:value="${s}"
-                                    th:text="${s}"
-                                    th:selected="${s == selectedSource}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="yearFrom">Jahr von</label>
-                        <input type="number" name="yearFrom" id="yearFrom"
-                               th:value="${selectedYearFrom}"
-                               th:min="${minYear}" th:max="${maxYear}"
-                               th:placeholder="${minYear}">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="yearTo">Jahr bis</label>
-                        <input type="number" name="yearTo" id="yearTo"
-                               th:value="${selectedYearTo}"
-                               th:min="${minYear}" th:max="${maxYear}"
-                               th:placeholder="${maxYear}">
-                    </div>
-                </div>
-                <div style="display: flex; gap: var(--spacing-md);">
-                    <button type="submit" class="btn-primary">🔍 Filtern</button>
-                    <a href="/data/global-data" class="btn-secondary">✖️ Filter zurücksetzen</a>
-                </div>
-            </form>
-        </div>
-
-        <!-- Info bei aktiven Filtern -->
-        <div th:if="${viewType == 'global' and (selectedCountry != null or selectedSource != null or selectedYearFrom != null or selectedYearTo != null)}"
-             class="info" style="margin-bottom: var(--spacing-lg);">
-            <p>
-                <strong>🔍 Aktive Filter:</strong>
-                <span th:if="${selectedCountry != null}">Land: <strong th:text="${selectedCountry}"></strong> | </span>
-                <span th:if="${selectedSource != null}">Quelle: <strong th:text="${selectedSource}"></strong> | </span>
-                <span th:if="${selectedYearFrom != null}">Von: <strong th:text="${selectedYearFrom}"></strong> | </span>
-                <span th:if="${selectedYearTo != null}">Bis: <strong th:text="${selectedYearTo}"></strong></span>
-            </p>
-        </div>
+        <h1>📋 Meine Daten</h1>
+        <p class="subtitle">Eigene CO2-Emissionsdaten verwalten</p>
 
         <div th:if="${success}" class="success" th:text="${success}"></div>
         <div th:if="${error}" class="error" th:text="${error}"></div>
-
-        <!-- Info Box -->
-        <div th:if="${viewType == 'my'}" class="info" style="margin-bottom: var(--spacing-lg);">
-            <p><strong>ℹ️ Hinweis:</strong> Hier sehen Sie nur Ihre eigenen Datensätze. Diese können Sie bearbeiten und löschen.</p>
-        </div>
-        <div th:if="${viewType == 'global'}" class="info" style="margin-bottom: var(--spacing-lg);">
-            <p><strong>ℹ️ Hinweis:</strong> Diese Daten stammen von der World Bank API und können nicht bearbeitet werden.</p>
-        </div>
 
         <!-- Statistiken -->
         <div class="stats">
             <div class="stat-box">
                 <h3 th:text="${totalRecords}">0</h3>
-                <p th:text="${viewType == 'my'} ? 'Meine Datensätze' : 'Globale Datensätze'"></p>
-            </div>
-            <div class="stat-box" th:if="${viewType == 'my'}">
-                <h3>✏️</h3>
-                <p>Vollständige Kontrolle</p>
-            </div>
-            <div class="stat-box" th:if="${viewType == 'global'}">
-                <h3>🔒</h3>
-                <p>Nur Leserechte</p>
+                <p>Meine Datensätze</p>
             </div>
         </div>
 
@@ -146,8 +53,8 @@
                     <th>Jahr</th>
                     <th>CO2-Emissionen (kt)</th>
                     <th>Quelle</th>
-                    <th th:if="${viewType == 'my'}">Erstellt am</th>
-                    <th th:if="${viewType == 'my'}">Status</th>
+                    <th>Erstellt am</th>
+                    <th>Status</th>
                     <th>Aktionen</th>
                 </tr>
                 </thead>
@@ -156,31 +63,28 @@
                     <td th:text="${emission.id}"></td>
                     <td>
                         <span th:text="${emission.country}"></span>
-                        <span th:if="${viewType == 'my'}" class="badge badge-user">Eigene</span>
-                        <span th:if="${viewType == 'global'}" class="badge badge-system">System</span>
+                        <span class="badge badge-user">Eigene</span>
                     </td>
                     <td th:text="${emission.year}"></td>
                     <td th:text="${#numbers.formatDecimal(emission.co2Emissions, 0, 'COMMA', 2, 'POINT')}"></td>
                     <td th:text="${emission.source != null ? emission.source : 'N/A'}"></td>
-                    <td th:if="${viewType == 'my'}"
-                        th:text="${#temporals.format(emission.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
-                    <!-- Status Spalte -->
-                    <td th:if="${viewType == 'my'}">
+                    <td th:text="${#temporals.format(emission.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td>
                         <span th:if="${emission.status == 'PENDING'}"
                               style="background:#ffc107; color:#000; padding:4px 10px; border-radius:20px; font-size:0.85em; font-weight:bold;">
-                            ⏳ Ausstehend
+                            Ausstehend
                         </span>
                         <span th:if="${emission.status == 'APPROVED'}"
                               style="background:#28a745; color:white; padding:4px 10px; border-radius:20px; font-size:0.85em; font-weight:bold;">
-                            ✅ Freigegeben
+                            Freigegeben
                         </span>
                         <span th:if="${emission.status == 'REJECTED'}"
                               style="background:#dc3545; color:white; padding:4px 10px; border-radius:20px; font-size:0.85em; font-weight:bold;">
-                            ❌ Abgelehnt
+                            Abgelehnt
                         </span>
                     </td>
                     <td>
-                        <div class="action-buttons" th:if="${viewType == 'my'}">
+                        <div class="action-buttons">
                             <a th:href="@{/data/edit/{id}(id=${emission.id})}" class="btn-edit">
                                 ✏️ Bearbeiten
                             </a>
@@ -191,7 +95,6 @@
                                 <button type="submit" class="btn-delete">🗑️ Löschen</button>
                             </form>
                         </div>
-                        <span class="view-only" th:if="${viewType == 'global'}">👁️ Nur Ansehen</span>
                     </td>
                 </tr>
                 </tbody>
@@ -201,15 +104,9 @@
         <!-- Leerzustand -->
         <div th:if="${emissions.isEmpty}" class="empty-state">
             <h2>📊 Keine Daten vorhanden</h2>
-            <div th:if="${viewType == 'my'}">
-                <p>Sie haben noch keine eigenen CO2-Emissionsdaten erfasst.</p>
-                <p>Fügen Sie jetzt Ihre ersten Daten hinzu!</p>
-                <a href="/data/add" class="btn-primary">➕ Erste Daten hinzufügen</a>
-            </div>
-            <div th:if="${viewType == 'global'}">
-                <p>Es wurden noch keine globalen Daten von der World Bank API geladen.</p>
-                <a href="/" class="btn-primary">🔄 Zur Startseite</a>
-            </div>
+            <p>Sie haben noch keine eigenen CO2-Emissionsdaten erfasst.</p>
+            <p>Fügen Sie jetzt Ihre ersten Daten hinzu!</p>
+            <a href="/data/add" class="btn-primary">➕ Erste Daten hinzufügen</a>
         </div>
     </div>
 </div>

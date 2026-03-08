@@ -116,7 +116,7 @@ input[type="text"] {
 
 .emission-value {
     font-size: 3em;
-    color: var(--primary-color);
+    color: white;
     font-weight: bold;
     margin: var(--spacing-lg) 0;
     text-align: center;
