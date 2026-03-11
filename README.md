@@ -11,4 +11,4 @@ docker-compose up
 http://localhost:8080
 
 ## Test Accounts
-Admin: name" admin /passwort: admin123
+Admin: name: admin /passwort: admin123
